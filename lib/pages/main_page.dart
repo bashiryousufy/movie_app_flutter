@@ -1,5 +1,6 @@
 import 'dart:ui';
 //Packages
+import 'package:ez_movie/models/main_page_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,14 +11,31 @@ import '../widgets/movie_tile.dart';
 import '../models/search_category.dart';
 import '../models/movie.dart';
 
+//Controllers
+import '../controllers/main_page_data_controller.dart';
+
+final mainPageDataControllerProvider =
+    StateNotifierProvider<MainPageDataController>(
+  (ref) {
+    return MainPageDataController();
+  },
+);
+
 class MainPage extends ConsumerWidget {
   late double _deviceHeight;
   late double _deviceWidth;
+
+  late MainPageDataController _mainPageDataController;
+  late MainPageData _mainPageData;
+
   late TextEditingController _searchTextFieldController;
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     _deviceHeight = MediaQuery.of(context).size.height;
     _deviceWidth = MediaQuery.of(context).size.width;
+
+    _mainPageDataController = watch(mainPageDataControllerProvider);
+    _mainPageData = watch(mainPageDataControllerProvider.state);
 
     _searchTextFieldController = TextEditingController();
     return _buildUI();
@@ -180,21 +198,21 @@ class MainPage extends ConsumerWidget {
   }
 
   Widget _moviesListViewWidget() {
-    final List<Movie> _movies = [];
+    final List<Movie> _movies = _mainPageData.movies;
 
-    for (var i = 0; i < 20; i++) {
-      _movies.add(Movie(
-          name: 'Mortal Combat',
-          language: 'EN',
-          isAdult: false,
-          description: 'Nice movie',
-          posterPath:
-              "https://m.media-amazon.com/images/M/MV5BY2ZlNWIxODMtN2YwZi00ZjNmLWIyN2UtZTFkYmZkNDQyNTAyXkEyXkFqcGdeQXVyODkzNTgxMDg@._V1_.jpg",
-          backdropPath:
-              'https://m.media-amazon.com/images/M/MV5BY2ZlNWIxODMtN2YwZi00ZjNmLWIyN2UtZTFkYmZkNDQyNTAyXkEyXkFqcGdeQXVyODkzNTgxMDg@._V1_.jpg',
-          rating: 7.8,
-          releaseDate: '2021-04-07'));
-    }
+    // for (var i = 0; i < 20; i++) {
+    //   _movies.add(Movie(
+    //       name: 'Mortal Combat',
+    //       language: 'EN',
+    //       isAdult: false,
+    //       description: 'Nice movie',
+    //       posterPath:
+    //           "https://m.media-amazon.com/images/M/MV5BY2ZlNWIxODMtN2YwZi00ZjNmLWIyN2UtZTFkYmZkNDQyNTAyXkEyXkFqcGdeQXVyODkzNTgxMDg@._V1_.jpg",
+    //       backdropPath:
+    //           'https://m.media-amazon.com/images/M/MV5BY2ZlNWIxODMtN2YwZi00ZjNmLWIyN2UtZTFkYmZkNDQyNTAyXkEyXkFqcGdeQXVyODkzNTgxMDg@._V1_.jpg',
+    //       rating: 7.8,
+    //       releaseDate: '2021-04-07'));
+    // }
     if (_movies.length != 0) {
       return ListView.builder(
           itemCount: _movies.length,
