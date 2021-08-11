@@ -29,6 +29,7 @@ class MainPage extends ConsumerWidget {
   late MainPageData _mainPageData;
 
   late TextEditingController _searchTextFieldController;
+
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     _deviceHeight = MediaQuery.of(context).size.height;
@@ -153,7 +154,7 @@ class MainPage extends ConsumerWidget {
   Widget _categorySelectionWidget() {
     return DropdownButton(
       dropdownColor: Colors.black38,
-      value: SearchCategory.popular,
+      value: _mainPageData.searchCategory,
       icon: Icon(
         Icons.menu,
         color: Colors.white24,
@@ -162,9 +163,9 @@ class MainPage extends ConsumerWidget {
         height: 1,
         color: Colors.white,
       ),
-      onChanged: (_value) {
-        //TODO: on Change
-      },
+      onChanged: (_value) => _value.toString().isNotEmpty
+          ? _mainPageDataController.updateSearchCategory(_value.toString())
+          : null,
       items: [
         DropdownMenuItem(
           child: Text(

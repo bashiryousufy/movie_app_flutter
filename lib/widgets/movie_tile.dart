@@ -33,7 +33,7 @@ class MovieTile extends StatelessWidget {
 
   Widget _movieInfoWidget() {
     return Container(
-      height: height,
+      height: height * 1.1,
       width: width * 0.66,
       child: Column(
         mainAxisSize: MainAxisSize.max,

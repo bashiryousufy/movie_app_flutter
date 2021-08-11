@@ -1,4 +1,5 @@
 //packages
+import 'package:ez_movie/models/search_category.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 
@@ -20,9 +21,37 @@ class MainPageDataController extends StateNotifier<MainPageData> {
   Future<void> getMovies() async {
     try {
       List<Movie> _movies = [];
-      _movies = await _movieService.getPopularMovies(page: state.page);
+
+      if (state.searchText.isEmpty) {
+        if (state.searchCategory == SearchCategory.popular) {
+          _movies = await _movieService.getPopularMovies(page: state.page);
+        } else if (state.searchCategory == SearchCategory.upcoming) {
+          _movies = await _movieService.getUpcomingMovies(page: state.page);
+        } else if (state.searchCategory == SearchCategory.none) {
+          _movies = [];
+        }
+      } else {
+        //perform text search
+      }
+
+      // for (var i = 0; i < _movies.length; i++) {
+      //   print(_movies[i].name);
+      // }
+
       state = state.copyWith(
           movies: [...state.movies, ..._movies], page: state.page + 1);
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void updateSearchCategory(String _category) {
+    try {
+      state = state.copyWith(
+          movies: [], page: 1, searchCategory: _category, searchText: '');
+      getMovies();
+    } catch (e) {
+      print(e);
+    }
   }
 }
