@@ -39,6 +39,8 @@ class MainPage extends ConsumerWidget {
     _mainPageData = watch(mainPageDataControllerProvider.state);
 
     _searchTextFieldController = TextEditingController();
+
+    _searchTextFieldController.text = _mainPageData.searchText;
     return _buildUI();
   }
 
@@ -129,9 +131,8 @@ class MainPage extends ConsumerWidget {
       height: _deviceHeight * 0.05,
       child: TextField(
         controller: _searchTextFieldController,
-        onSubmitted: (_input) {
-          //TODO: Handle sumbit search
-        },
+        onSubmitted: (_input) =>
+            _mainPageDataController.updateTextSearch(_input),
         style: TextStyle(
           color: Colors.white,
         ),
