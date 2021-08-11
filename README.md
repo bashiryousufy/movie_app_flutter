@@ -19,7 +19,7 @@ samples, guidance on mobile development, and a full API reference.
 ## Public MovieDB API
 https://developers.themoviedb.org/3/movies/get-movie-details
 
-# The API EndPoints used are:
+### The API EndPoints used are:
 /movie/popular (GET)
 
 /movie/upcoming (GET)
