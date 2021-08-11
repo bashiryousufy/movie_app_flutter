@@ -21,9 +21,17 @@ final mainPageDataControllerProvider =
   },
 );
 
+final selectedMoviePosterURLProvider = StateProvider<String>((ref) {
+  final _movies = ref.watch(mainPageDataControllerProvider.state).movies;
+
+  return _movies.length != 0 ? _movies[0].posterURL() : '';
+});
+
 class MainPage extends ConsumerWidget {
   late double _deviceHeight;
   late double _deviceWidth;
+
+  late var _selectedMoviePosterURL;
 
   late MainPageDataController _mainPageDataController;
   late MainPageData _mainPageData;
@@ -37,6 +45,7 @@ class MainPage extends ConsumerWidget {
 
     _mainPageDataController = watch(mainPageDataControllerProvider);
     _mainPageData = watch(mainPageDataControllerProvider.state);
+    _selectedMoviePosterURL = watch(selectedMoviePosterURLProvider);
 
     _searchTextFieldController = TextEditingController();
 
@@ -63,26 +72,33 @@ class MainPage extends ConsumerWidget {
   }
 
   Widget _backgroundWidget() {
-    return Container(
-      height: _deviceHeight,
-      width: _deviceWidth,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        image: DecorationImage(
-          image: NetworkImage(
-              'https://static.wikia.nocookie.net/marvelcinematicuniverse/images/6/6f/Black_Widow_July_9_Poster.png/revision/latest?cb=20210629170602'),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.2),
+    if (_selectedMoviePosterURL.state != null) {
+      return Container(
+        height: _deviceHeight,
+        width: _deviceWidth,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          image: DecorationImage(
+            image: NetworkImage(_selectedMoviePosterURL.state.toString()),
+            fit: BoxFit.cover,
           ),
         ),
-      ),
-    );
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.2),
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Container(
+        height: _deviceHeight,
+        width: _deviceWidth,
+        color: Colors.black,
+      );
+    }
   }
 
   Widget _forgroundWidget() {
@@ -237,7 +253,10 @@ class MainPage extends ConsumerWidget {
                   padding: EdgeInsets.symmetric(
                       vertical: _deviceHeight * 0.01, horizontal: 0),
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      _selectedMoviePosterURL.state =
+                          _movies[_count].posterURL();
+                    },
                     child: MovieTile(
                       movie: _movies[_count],
                       height: _deviceHeight * 0.20,
